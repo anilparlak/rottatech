@@ -1,0 +1,33 @@
+.customModal__overlay {
+    position: fixed;
+    top: 200px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 600px;
+    height: 400px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.customModal {
+    &__header {
+        position: relative;
+        display: flex;
+        align-items: center ;
+        &__close {
+            position: absolute;
+            right: 0;
+            cursor: pointer;
+            svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+        &__title {
+            margin: 16px 0;
+            font-size: 24px;
+        }
+    }
+}

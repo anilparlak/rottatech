@@ -1,0 +1,24 @@
+.postDetail__comments {
+    .comment {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #f2f2f2;
+        padding: 12px;
+        border-radius: 12px;
+        &__name {
+            font-size: 18px;
+        }
+        &__parag {
+            font-size: 16px;
+        }
+        &__email {
+            font-size: 14px;
+            text-align: right;
+        }
+        &__delete {
+            text-align: right;
+            cursor: pointer;
+        }
+    }
+}

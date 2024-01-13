@@ -1,0 +1,49 @@
+$addBtnBgColor: #238636;
+$addBtnBgColorHover: #2ea043;
+$deleteAllBtnBgColor: #db2828;
+$deleteAllBtnBgColorHover: #db4343;
+$customBtnBgColor: #000;
+.button-container {
+  position: relative;
+  display: inline-block;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  border: 1px solid;
+  border-radius: 6px;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: 80ms cubic-bezier(0.33, 1, 0.68, 1);
+  transition-property: color, background-color, box-shadow, border-color;
+  color: #fff;
+  background-color: $customBtnBgColor;
+  border-color: rgba(240, 246, 252, 0.1);
+  box-shadow: 0 0 transparent, 0 0 transparent;
+
+  &:hover {
+    background-color: $customBtnBgColor;
+    border-color: rgba(240, 246, 252, 0.1);
+  }
+
+  &.add {
+    background-color: $addBtnBgColor;
+
+    &:hover {
+      background-color: $addBtnBgColorHover;
+    }
+  }
+
+  &.deleteAll {
+    background-color: $deleteAllBtnBgColor;
+
+    &:hover {
+      background-color: $deleteAllBtnBgColorHover;
+    }
+  }
+}

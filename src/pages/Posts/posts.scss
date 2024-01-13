@@ -1,0 +1,46 @@
+.postsPage {
+  margin: 40px 0;
+  position: relative;
+  &__addNew {
+    position: absolute;
+    top: 9px;
+    right: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+  &__cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    margin: 25px 0 0;
+  }
+  &__addForm {
+    padding: 16px 0;
+    .form-input {
+      position: relative;
+      margin: 0 0 45px 0;
+      width: 100%;
+      label {
+        position: absolute;
+        top: -25px;
+        left: 0;
+        font-size: 14px;
+        color: #000;
+        line-height: 2;
+      }
+      input[type="text"], textarea {
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: solid 1px #c2c1c3;
+        background-color: #fff;
+        width: 100%;
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+.card {
+    border-radius: 23px;
+    box-shadow: 0 21px 41px 0 rgba(0, 0, 0, 0.1);
+    border: solid 1px #dadada;
+    background-color: #fff;
+    padding: 35px 30px 35px 30px;
+    width: calc(33.3% - 16.5px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    &__info {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        margin-bottom: 15px;
+        cursor: pointer;
+    }
+    &__icons {
+        display: flex;
+        justify-content: flex-end;
+        div {
+            cursor: pointer;
+        }
+    }
+}
