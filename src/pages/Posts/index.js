@@ -22,7 +22,7 @@ const Posts = () => {
     body: "",
   });
   const dispatch = useDispatch();
-  const { posts, postsLoading } = useSelector((state) => state.posts);
+  const { posts, postsLoading, postsError } = useSelector((state) => state.posts);
 
   const formFields = [
     {
@@ -156,28 +156,38 @@ const Posts = () => {
         <span>Yeni Post Ekle</span>
         <IoMdAddCircle />
       </div>
-      <div className="postsPage__cards">
-        {!postsLoading &&
-          posts?.length > 0 &&
-          filterePosts.map((item) => (
-            <Card
-              key={item?.id}
-              cardItem={item}
-              handleDeletePost={handleDeletePost}
-              handleUpdatePostOpen={handleUpdatePostOpen}
-            />
-          ))}
+      {
+        postsError ? (
+          <span className="notFound">
+            İçerik Bulunamadı, Lütfen Daha Sonra Tekrar Deneyiniz
+          </span>
+        ) : (
+          <>          
+          <div className="postsPage__cards">
+            {!postsLoading &&
+              posts?.length > 0 &&
+              filterePosts.map((item) => (
+                <Card
+                  key={item?.id}
+                  cardItem={item}
+                  handleDeletePost={handleDeletePost}
+                  handleUpdatePostOpen={handleUpdatePostOpen}
+                />
+              ))}
+          </div>
+          <CustomFormModal
+            isOpen={isOpenModal}
+            setOpen={setIsOpenModal}
+            title={`${!!isUpdatablePost ? "Güncelle" : "Yeni Post Ekle"}`}
+            formFields={formFields}
+            formData={addForm}
+            onSubmit={handleAddPost}
+            onChange={handleChange}
+          />
+      </>
+        )
+      }
       </div>
-      <CustomFormModal
-        isOpen={isOpenModal}
-        setOpen={setIsOpenModal}
-        title={`${!!isUpdatablePost ? "Güncelle" : "Yeni Post Ekle"}`}
-        formFields={formFields}
-        formData={addForm}
-        onSubmit={handleAddPost}
-        onChange={handleChange}
-      />
-    </div>
   );
 };
 
