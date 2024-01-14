@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import CustomFormModal from "../../components/CustomFormModal";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getPostDetail } from "../../store/postDetail";
+import { clearPostDetail, getPostDetail } from "../../store/postDetail";
 import {
   getComments,
   deleteComment,
@@ -12,6 +12,7 @@ import Comment from "../../components/Comment";
 import { IoMdAddCircle } from "react-icons/io";
 import { toast } from "react-toastify";
 import "./postDetail.scss";
+import Loading from "../../components/Loading";
 
 const PostDetail = () => {
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -22,7 +23,7 @@ const PostDetail = () => {
   });
   const { postId } = useParams();
   const dispatch = useDispatch();
-  const { postDetail, postDetailError } = useSelector(
+  const { postDetail, postDetailError, postDetailLoading} = useSelector(
     (state) => state.postDetail
   );
   const { comments, commentsLoading } = useSelector((state) => state.comments);
@@ -89,6 +90,10 @@ const PostDetail = () => {
   useEffect(() => {
     dispatch(getPostDetail({ id: postId }));
     dispatch(getComments({ id: postId }));
+
+    return () => {
+      dispatch(clearPostDetail());
+    }
   }, [postId]);
 
   const handleDeleteComment = (id) => {
@@ -96,10 +101,17 @@ const PostDetail = () => {
   };
   return (
     <>
-      {!postDetailError && !!postDetail ? (
-        <div className="postDetail">
-          <h1>{postDetail.title}</h1>
-          <p>{postDetail.body}</p>
+      {
+        postDetailLoading ? (
+          <Loading />
+        ) : postDetailError ? (
+            <span className="notFound">
+            Sayfa Bulunamadı, Lütfen Daha Sonra Tekrar Deneyiniz
+          </span>
+        ) : (
+          <div className="postDetail">
+          <h1>{postDetail?.title}</h1>
+          <p>{postDetail?.body}</p>
           <div className="postDetail__container">
             <div
               className="postDetail__addNew"
@@ -130,11 +142,8 @@ const PostDetail = () => {
             onChange={handleChange}
           />
         </div>
-      ) : (
-        <span className="notFound">
-          Sayfa Bulunamadı, Lütfen Daha Sonra Tekrar Deneyiniz
-        </span>
-      )}
+        )
+      }
     </>
   );
 };

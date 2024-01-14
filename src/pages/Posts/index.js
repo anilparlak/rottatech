@@ -12,6 +12,7 @@ import Search from "../../components/Search";
 import { IoMdAddCircle } from "react-icons/io";
 import CustomFormModal from "../../components/CustomFormModal";
 import "./posts.scss";
+import Loading from "../../components/Loading";
 
 const Posts = () => {
   const [filter, setFilter] = useState("");
@@ -164,7 +165,7 @@ const Posts = () => {
         ) : (
           <>          
           <div className="postsPage__cards">
-            {!postsLoading &&
+            {!postsLoading ? (
               posts?.length > 0 &&
               filterePosts.map((item) => (
                 <Card
@@ -173,7 +174,7 @@ const Posts = () => {
                   handleDeletePost={handleDeletePost}
                   handleUpdatePostOpen={handleUpdatePostOpen}
                 />
-              ))}
+              ))) : <Loading loadingClass="postPage" /> }
           </div>
           <CustomFormModal
             isOpen={isOpenModal}
