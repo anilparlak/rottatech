@@ -7,6 +7,26 @@
     }
     p {
         font-size: 24px;
+        @media screen and (max-width: 514px) {
+            font-size: 16px;
+        }
+    }
+    &__container {
+        position: relative;
+        padding-top: 20px;
+    }
+    &__addNew {
+        position: absolute;
+        top: 15px;
+        right: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        svg {
+            width: 24px;
+            height: 24px;
+          }
     }
     &__comments {
         background: #fff;
@@ -18,4 +38,13 @@
         text-align: left;
         margin-top: 40px;
     }
+}
+.notFound {
+    text-align: center;
+    margin: 100px;
+    font-size: 32px;
+    display: flex;
+    background: #cccc;
+    padding: 16px;
+    border-radius: 6px;
 }

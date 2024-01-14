@@ -19,28 +19,24 @@
     flex-wrap: wrap;
     gap: 25px;
     margin: 25px 0 0;
+    align-items: stretch;
+    justify-content: center;
   }
-  &__addForm {
-    padding: 16px 0;
-    .form-input {
-      position: relative;
-      margin: 0 0 45px 0;
-      width: 100%;
-      label {
-        position: absolute;
-        top: -25px;
-        left: 0;
-        font-size: 14px;
-        color: #000;
-        line-height: 2;
-      }
-      input[type="text"], textarea {
-        padding: 10px 15px;
-        border-radius: 8px;
-        border: solid 1px #c2c1c3;
-        background-color: #fff;
-        width: 100%;
-      }
+  @media screen and (max-width: 1024px) {
+    .postsPage__addNew {
+      top: 60px;
+      margin: auto;
+      left: 0;
+      right: 0;
+      width: 160px;
+    }
+    .postsPage__cards {
+      padding-top: 40px;
     }
   }
+  @media screen and (max-width: 514px) {
+    .postsPage__cards {
+      gap: 16px;
+    }
+}
 }

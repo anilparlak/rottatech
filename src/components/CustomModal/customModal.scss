@@ -5,11 +5,15 @@
     right: 0;
     margin: auto;
     width: 600px;
-    height: 400px;
+    height: auto;
+    min-height: 400px;
     background: #fff;
     border-radius: 16px;
     padding: 16px;
     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    @media screen and (max-width: 668px) {
+        width: calc(100% - 32px);
+    }
 }
 .customModal {
     &__header {

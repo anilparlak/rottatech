@@ -1,33 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, deletePost, getPosts } from "../../store/posts";
+import {
+  createPost,
+  deletePost,
+  getPosts,
+  updatePost,
+} from "../../store/posts";
 import Card from "../../components/Card";
 import Search from "../../components/Search";
-import CustomModal from "../../components/CustomModal";
 import { IoMdAddCircle } from "react-icons/io";
-import Button from "../../components/Button";
+import CustomFormModal from "../../components/CustomFormModal";
 import "./posts.scss";
 
 const Posts = () => {
   const [filter, setFilter] = useState("");
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isUpdatablePost, setIsUpdatablePost] = useState(false);
   const [addForm, setAddForm] = useState({
     title: "",
     body: "",
   });
   const dispatch = useDispatch();
-  const { posts, postsLoading } = useSelector(
-    (state) => state.posts
-  );
+  const { posts, postsLoading } = useSelector((state) => state.posts);
 
-  useEffect(() => {
-    dispatch(getPosts());
-  }, []);
+  const formFields = [
+    {
+      name: "title",
+      label: "Başlık",
+      type: "text",
+      placeholder: "Başlık",
+    },
+    {
+      name: "body",
+      label: "Mesaj",
+      type: "textarea",
+      placeholder: "Mesaj",
+    },
+  ];
 
   const handleChange = (e) => {
-    console.log(e.target.value);
-    setAddForm({ ...addForm, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setAddForm((prevData) => ({ ...prevData, [name]: value }));
   };
   const onSearchChange = (e) => {
     const searchField = e.target.value.toLocaleLowerCase();
@@ -36,23 +50,56 @@ const Posts = () => {
     });
   };
 
-  const handleAddPost = async () => {
+  const handleAddPost = async (e) => {
+    e.preventDefault();
     if (addForm.title === "" || addForm.body === "") {
-      toast.error("Formu lütfen doldurun.", {
+      toast.error("Formu lütfen eksiksiz doldurun.", {
         closeButton: false,
       });
       return null;
     }
+    if (isUpdatablePost) {
+      handleUpdateForm(e);
+    } else {
+      dispatch(
+        createPost({
+          title: addForm?.title,
+          body: addForm?.body,
+          userId: +posts?.length + 1,
+        })
+      )
+        .then(() => {
+          toast.success("Post başarılı bir şekilde eklendi.", {
+            closeButton: true,
+          });
+          setAddForm({
+            title: "",
+            body: "",
+          });
+          setIsOpenModal(false);
+        })
+        .catch(() => {
+          toast.error("Post eklenemedi.", {
+            closeButton: false,
+          });
+        });
+    }
+  };
+
+  const handleUpdateForm = async (e) => {
+    e.preventDefault();
+
     dispatch(
-      createPost({
+      updatePost({
         title: addForm?.title,
         body: addForm?.body,
-        userId: posts?.length + 1,
+        userId: addForm?.userId,
+        id: addForm?.id,
       })
     )
       .then(() => {
-        toast.success("Post başarılı bir şekilde eklendi.", {
-          closeButton: false,
+        toast.success("Post başarılı bir şekilde güncellendi.", {
+          closeButton: true,
         });
         setAddForm({
           title: "",
@@ -61,65 +108,75 @@ const Posts = () => {
         setIsOpenModal(false);
       })
       .catch(() => {
-        toast.error("Post eklenemedi.", {
+        toast.error("Post güncellenemedi.", {
           closeButton: false,
         });
       });
   };
 
-  const handleDeletePost = async (id) => {
+  const handleDeletePost = (id) => {
     dispatch(deletePost(id));
+  };
+
+  const handleUpdatePostOpen = (id) => {
+    if (posts[+id - 1]) {
+      setAddForm((prevData) => ({ ...prevData, ...posts[+id - 1] }));
+      setIsOpenModal(true);
+      setIsUpdatablePost(true);
+    } else {
+      toast.error("Post güncelenebilir değil.", {
+        closeButton: false,
+      });
+    }
+  };
+
+  const handleOpenForm = () => {
+    setAddForm({
+      title: "",
+      body: "",
+    });
+    setIsOpenModal(true);
+    setIsUpdatablePost(false);
   };
 
   const filterePosts = posts?.filter((post) => {
     return post?.title?.toLocaleLowerCase()?.includes(filter);
   });
 
+  useEffect(() => {
+    if (posts?.length === 0) {
+      dispatch(getPosts());
+    }
+  }, []);
+
   return (
     <div className="postsPage">
       <Search onChangeHandler={onSearchChange} />
-      <div className="postsPage__addNew" onClick={() => setIsOpenModal(true)}>
+      <div className="postsPage__addNew" onClick={handleOpenForm}>
         <span>Yeni Post Ekle</span>
         <IoMdAddCircle />
       </div>
       <div className="postsPage__cards">
         {!postsLoading &&
           posts?.length > 0 &&
-          filterePosts.map((item) => <Card key={item?.id} cardItem={item} handleDeletePost={handleDeletePost}/>)}
+          filterePosts.map((item) => (
+            <Card
+              key={item?.id}
+              cardItem={item}
+              handleDeletePost={handleDeletePost}
+              handleUpdatePostOpen={handleUpdatePostOpen}
+            />
+          ))}
       </div>
-      <CustomModal
+      <CustomFormModal
         isOpen={isOpenModal}
         setOpen={setIsOpenModal}
-        title="Yeni Ekle"
-      >
-        <div className="postsPage__addForm">
-          <div className="form-input">
-            <label htmlFor="name">Başlık</label>
-            <input
-              type="text"
-              name="title"
-              id="title"
-              placeholder="Başlık"
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="form-input">
-            <label htmlFor="body">Mesaj</label>
-            <textarea
-              name="body"
-              id="body"
-              rows="4"
-              placeholder="Mesaj"
-              onChange={handleChange}
-              required
-            ></textarea>
-          </div>
-          <Button onClick={handleAddPost} type="submit">
-            Gönder
-          </Button>
-        </div>
-      </CustomModal>
+        title={`${!!isUpdatablePost ? "Güncelle" : "Yeni Post Ekle"}`}
+        formFields={formFields}
+        formData={addForm}
+        onSubmit={handleAddPost}
+        onChange={handleChange}
+      />
     </div>
   );
 };

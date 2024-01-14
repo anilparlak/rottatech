@@ -9,6 +9,7 @@
     flex-direction: column;
     justify-content: space-between;
     &__info {
+        height: 100%;
         display: flex;
         flex-direction: column;
         gap: 25px;
@@ -18,8 +19,17 @@
     &__icons {
         display: flex;
         justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
         div {
             cursor: pointer;
         }
+    }
+
+    @media screen and (max-width: 1024px) {
+        width: calc(50% - 25px);
+    }
+    @media screen and (max-width: 514px) {
+        width: calc(100% - 32px);
     }
 }

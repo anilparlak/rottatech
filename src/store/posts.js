@@ -22,12 +22,35 @@ export const createPost = createAsyncThunk(
   "posts/createPost",
   async (req, { getState, requestId }) => {
     const { addPostRequestId, addPostLoading } = getState().posts;
-    console.log("req",req)
     if (!addPostLoading || requestId !== addPostRequestId) {
       return;
     }
     try {
       const response = await axios.post(`${BASE_URL}/posts`, {
+        ...req
+      },
+      {
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }
+      );
+      return response?.data;
+    } catch (error) {
+      console.log("error");
+    }
+  }
+);
+
+export const updatePost = createAsyncThunk(
+  "posts/updatePost",
+  async (req, { getState, requestId }) => {
+    const { updatePostRequestId, updatePostLoading } = getState().posts;
+    if (!updatePostLoading || requestId !== updatePostRequestId) {
+      return;
+    }
+    try {
+      const response = await axios.put(`${BASE_URL}/posts/${req?.id}`, {
         ...req
       },
       {
@@ -54,7 +77,13 @@ const initialState = {
   addPost: null,
   addPostLoading: false,
   addPostError: false,
-  addPostRequestId: undefined
+  addPostRequestId: undefined,
+
+  // updatePost
+  updatePost: null,
+  updatePostLoading: false,
+  updatePostError: false,
+  updatePostRequestId: undefined
 };
 
 const slice = createSlice({
@@ -108,6 +137,27 @@ const slice = createSlice({
       .addCase(createPost.rejected, (state) => {
         state.addPostLoading = false;
         state.addPostError = true;
+        state.addPost = null;
+      })
+
+      .addCase(updatePost.pending, (state, action) => {
+        if (!state.updatePostLoading) {
+          state.updatePostLoading = true;
+          state.updatePostError = false;
+          state.updatePostRequestId = action?.meta?.requestId;
+        }
+      })
+      .addCase(updatePost.fulfilled, (state, action) => {
+        const { requestId } = action?.meta;
+        state.updatePostError = false;
+        if (state.updatePostRequestId === requestId && !!state.updatePostLoading) {
+          state.updatePostLoading = false;
+          state.posts[+action?.payload?.id - 1] = action?.payload
+        }
+      })
+      .addCase(updatePost.rejected, (state) => {
+        state.updatePostLoading = false;
+        state.updatePostError = true;
         state.addPost = null;
       })
   },

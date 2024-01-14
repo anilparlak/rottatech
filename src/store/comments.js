@@ -18,12 +18,42 @@ export const getComments = createAsyncThunk(
   }
 );
 
+export const createComment = createAsyncThunk(
+  "comments/createComment",
+  async (req, { getState, requestId }) => {
+    const { addCommentRequestId, addCommentLoading } = getState().comments;
+    if (!addCommentLoading || requestId !== addCommentRequestId) {
+      return;
+    }
+    try {
+      const response = await axios.post(`${BASE_URL}/comments`, {
+        ...req
+      },
+      {
+        headers: {
+          'Content-type': 'application/json; charset=UTF-8',
+        },
+      }
+      );
+      return response?.data;
+    } catch (error) {
+      console.log("error");
+    }
+  }
+);
+
 const initialState = {
   // getComments
   comments: null,
   commentsLoading: false,
   commentsError: false,
-  commentsRequestId: undefined
+  commentsRequestId: undefined,
+
+  // addComment
+  addComment: null,
+  addCommentLoading: false,
+  addCommentError: false,
+  addCommentRequestId: undefined
 };
 
 const slice = createSlice({
@@ -57,7 +87,28 @@ const slice = createSlice({
         state.commentsLoading = false;
         state.commentsError = true;
         state.comments = null;
-      });
+      })
+
+      .addCase(createComment.pending, (state, action) => {
+        if (!state.addCommentLoading) {
+          state.addCommentLoading = true;
+          state.addCommentError = false;
+          state.addCommentRequestId = action?.meta?.requestId;
+        }
+      })
+      .addCase(createComment.fulfilled, (state, action) => {
+        const { requestId } = action?.meta;
+        state.addCommentError = false;
+        if (state.addCommentRequestId === requestId && !!state.addCommentLoading) {
+          state.addCommentLoading = false;
+          state.comments.unshift(action?.payload);
+        }
+      })
+      .addCase(createComment.rejected, (state) => {
+        state.addCommentLoading = false;
+        state.addCommentError = true;
+        state.addComment = null;
+      })
   },
 });
 
